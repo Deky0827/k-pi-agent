@@ -33,6 +33,17 @@ jobs:
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
           $installer = "release/K pi agent-Setup-$version-x64.exe"
           $blockmap = "$installer.blockmap"
+          $tag = $env:GITHUB_REF_NAME
+          gh release view $tag --json tagName *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag --title "K pi agent $version" --notes-file RELEASE_NOTES.md --prerelease
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          gh release upload $tag $installer $blockmap --clobber
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $release = gh release view $tag --json assets | ConvertFrom-Json
+          $assetName = $release.assets | Where-Object { $_.name -like "*Setup-$version-x64.exe" } | Select-Object -First 1 -ExpandProperty name
+          if (!$assetName) { throw "GitHub release installer asset was not found for $tag" }
           $hash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$hash  $([System.IO.Path]::GetFileName($installer))" | Set-Content -LiteralPath SHA256SUMS.txt -Encoding ascii
-          gh release create $env:GITHUB_REF_NAME $installer $blockmap SHA256SUMS.txt --title "K pi agent $version" --notes-file RELEASE_NOTES.md --prerelease
+          "$hash  $assetName" | Set-Content -LiteralPath SHA256SUMS.txt -Encoding ascii
+          gh release upload $tag SHA256SUMS.txt --clobber
