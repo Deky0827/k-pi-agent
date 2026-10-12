@@ -5,13 +5,13 @@
   "author": "K pi agent contributors",
   "license": "MIT",
   "description": "Standalone Windows desktop distribution for @agegr/pi-web (K pi agent)",
-  "homepage": "https://github.com/Deky0827/pi-web-agent-app#readme",
+  "homepage": "https://github.com/Deky0827/k-pi-agent#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Deky0827/pi-web-agent-app.git"
+    "url": "https://github.com/Deky0827/k-pi-agent.git"
   },
   "bugs": {
-    "url": "https://github.com/Deky0827/pi-web-agent-app/issues"
+    "url": "https://github.com/Deky0827/k-pi-agent/issues"
   },
   "main": "dist/main/main.js",
   "type": "module",

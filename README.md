@@ -4,14 +4,14 @@
 <h1 align="center">K pi agent</h1>
 <p align="center">面向科研、学习与日常工作的个人电脑助手。<br>让研究生和非编程用户，更方便地拥有自己的 Agent App。</p>
 <p align="center">
-  <a href="https://github.com/Deky0827/pi-web-agent-app/actions/workflows/ci.yml"><img src="https://github.com/Deky0827/pi-web-agent-app/actions/workflows/ci.yml/badge.svg" alt="Windows 构建与检查"></a>
-  <a href="https://github.com/Deky0827/pi-web-agent-app/releases/tag/v2.6.2"><img src="https://img.shields.io/badge/version-2.6.2_preview-5975d9" alt="2.6.2 公开预览版"></a>
+  <a href="https://github.com/Deky0827/k-pi-agent/actions/workflows/ci.yml"><img src="https://github.com/Deky0827/k-pi-agent/actions/workflows/ci.yml/badge.svg" alt="Windows 构建与检查"></a>
+  <a href="https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2"><img src="https://img.shields.io/badge/version-2.6.2_preview-5975d9" alt="2.6.2 公开预览版"></a>
   <img src="https://img.shields.io/badge/platform-Windows_x64-0078D4" alt="Windows x64">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-24756B" alt="MIT License"></a>
   <a href="https://github.com/agegr/pi-web"><img src="https://img.shields.io/badge/based_on-Pi_Web-24756B" alt="基于 Pi Web"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/Deky0827/pi-web-agent-app/releases/download/v2.6.2/K.pi.agent-Setup-2.6.2-x64.exe"><strong>下载 Windows 安装包</strong></a> ·
+  <a href="https://github.com/Deky0827/k-pi-agent/releases/download/v2.6.2/K.pi.agent-Setup-2.6.2-x64.exe"><strong>下载 Windows 安装包</strong></a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="README.zh-CN.md">开发与技术说明</a> ·
   <a href="https://github.com/agegr/pi-web">上游 Pi Web</a> ·
@@ -56,9 +56,9 @@
 
 | 平台 | 当前版本 | 下载 |
 | --- | --- | --- |
-| Windows x64 | 2.6.2 · 公开预览版 | [下载安装包](https://github.com/Deky0827/pi-web-agent-app/releases/download/v2.6.2/K.pi.agent-Setup-2.6.2-x64.exe) |
+| Windows x64 | 2.6.2 · 公开预览版 | [下载安装包](https://github.com/Deky0827/k-pi-agent/releases/download/v2.6.2/K.pi.agent-Setup-2.6.2-x64.exe) |
 
-[查看完整发布说明与校验文件](https://github.com/Deky0827/pi-web-agent-app/releases/tag/v2.6.2)。普通用户下载安装包即可；GitHub 自动提供的 Source code 是开发用源码归档。
+[查看完整发布说明与校验文件](https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2)。普通用户下载安装包即可；GitHub 自动提供的 Source code 是开发用源码归档。
 
 安装包包含运行环境，无需预先手动安装 Node.js。首次使用仍需配置自己的模型服务、API Key 或提供商登录；API 调用费用由所使用的服务决定。当前未提供 macOS 或 Linux 安装包。
 
@@ -122,7 +122,7 @@ flowchart LR
 
 ## 参与开发
 
-欢迎通过 [Issues](https://github.com/Deky0827/pi-web-agent-app/issues) 报告问题、提出建议，或通过 Pull Request 参与改进。
+欢迎通过 [Issues](https://github.com/Deky0827/k-pi-agent/issues) 报告问题、提出建议，或通过 Pull Request 参与改进。
 
 - [开发、构建与数据位置说明](README.zh-CN.md)
 - [开发交接与实现地图](HANDOFF.zh-CN.md)
