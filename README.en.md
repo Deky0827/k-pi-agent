@@ -1,6 +1,6 @@
 # K pi agent
 
-[中文主页](README.md) · [Windows preview download](https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2) · [Upstream Pi Web](https://github.com/agegr/pi-web)
+[中文主页](README.md) · [Project site](https://deky0827.github.io/k-pi-agent/) · [Windows preview download](https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2) · [Upstream Pi Web](https://github.com/agegr/pi-web)
 
 **A personal desktop assistant for research, learning and everyday work.** Built for graduate students and other users without a programming background, K pi agent aims to help people build their own Agent App around their models, files and local sessions.
 

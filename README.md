@@ -12,6 +12,7 @@
 </p>
 <p align="center">
   <a href="https://github.com/Deky0827/k-pi-agent/releases/download/v2.6.2/K.pi.agent-Setup-2.6.2-x64.exe"><strong>下载 Windows 安装包</strong></a> ·
+  <a href="https://deky0827.github.io/k-pi-agent/">项目主页</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="README.zh-CN.md">开发与技术说明</a> ·
   <a href="https://github.com/agegr/pi-web">上游 Pi Web</a> ·

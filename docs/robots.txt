@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://deky0827.github.io/k-pi-agent/sitemap.xml

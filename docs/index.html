@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>K-Pi Agent｜基于 Pi Web 的 Windows 个人电脑助手</title>
+    <meta name="description" content="K-Pi Agent 是面向科研、学习与日常工作的 Windows 个人电脑助手，基于 Pi Web 构建桌面应用，帮助用户从自己的电脑开始搭建个人 Agent。">
+    <meta name="keywords" content="K-Pi Agent, K pi agent, Pi Web, Windows Agent App, 个人电脑助手, 个人 AI 助手, 科研助手, 学习助手, 桌面 Agent">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link rel="canonical" href="https://deky0827.github.io/k-pi-agent/">
+    <link rel="alternate" hreflang="zh-CN" href="https://deky0827.github.io/k-pi-agent/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="K-Pi Agent｜你的个人电脑助手">
+    <meta property="og:description" content="面向科研、学习与日常工作的个人电脑助手。基于 Pi Web 构建的 Windows Agent App。">
+    <meta property="og:url" content="https://deky0827.github.io/k-pi-agent/">
+    <meta property="og:image" content="https://deky0827.github.io/k-pi-agent/images/app-home.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "K-Pi Agent",
+        "alternateName": ["K pi agent", "K-Pi Agent App"],
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows 10, Windows 11",
+        "description": "面向科研、学习与日常工作的个人电脑助手，基于 Pi Web 构建的 Windows Agent App。",
+        "url": "https://deky0827.github.io/k-pi-agent/",
+        "downloadUrl": "https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2",
+        "codeRepository": "https://github.com/Deky0827/k-pi-agent",
+        "softwareVersion": "2.6.2",
+        "license": "https://github.com/Deky0827/k-pi-agent/blob/main/LICENSE",
+        "isBasedOn": "https://github.com/agegr/pi-web",
+        "author": {
+          "@type": "Person",
+          "name": "Deky0827",
+          "url": "https://github.com/Deky0827"
+        }
+      }
+    </script>
+    <style>
+      :root { color-scheme: light; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #182230; background: #f5f7fb; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      a { color: #155eef; }
+      .wrap { max-width: 1000px; margin: 0 auto; padding: 28px 22px 56px; }
+      nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #475467; font-size: 14px; }
+      nav a { margin-left: 14px; text-decoration: none; }
+      header { padding: 74px 0 34px; }
+      .eyebrow { color: #087e8b; font-weight: 650; letter-spacing: .04em; }
+      h1 { margin: 12px 0; font-size: clamp(38px, 8vw, 66px); letter-spacing: -.04em; }
+      h2 { margin-top: 0; font-size: 25px; }
+      .lead { max-width: 760px; color: #475467; font-size: clamp(19px, 3vw, 24px); line-height: 1.65; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+      .button { display: inline-block; border: 1px solid #d0d5dd; border-radius: 9px; padding: 11px 16px; color: #344054; background: white; font-weight: 650; text-decoration: none; }
+      .button.primary { border-color: #155eef; color: white; background: #155eef; }
+      .card { margin-top: 28px; border: 1px solid #e4e7ec; border-radius: 16px; padding: 26px; background: white; box-shadow: 0 5px 20px #1018280a; }
+      .card p, li { color: #475467; line-height: 1.75; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 18px; }
+      .item { border-radius: 10px; padding: 16px; background: #f8fafc; }
+      .item strong { display: block; margin-bottom: 6px; }
+      img { display: block; width: 100%; height: auto; border: 1px solid #e4e7ec; border-radius: 12px; }
+      footer { padding: 28px 4px 0; color: #667085; font-size: 14px; line-height: 1.8; }
+      @media (max-width: 600px) { .wrap { padding: 18px 16px 40px; } header { padding-top: 50px; } .card { padding: 20px; } nav span { display: none; } }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <nav aria-label="项目链接">
+        <strong>K-Pi Agent</strong>
+        <div><a href="https://github.com/Deky0827/k-pi-agent">GitHub 仓库</a><a href="https://github.com/agegr/pi-web">上游 Pi Web</a></div>
+      </nav>
+      <header>
+        <div class="eyebrow">Windows Personal Agent App · 基于 Pi Web</div>
+        <h1>你的个人电脑助手</h1>
+        <p class="lead">面向科研、学习与日常工作。K-Pi Agent 将 Pi Web 包装为 Windows 桌面应用，让没有编程背景的用户也能更方便地开始搭建自己的个人 Agent。</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/Deky0827/k-pi-agent">查看 GitHub 项目</a>
+          <a class="button" href="https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2">下载公开预览版 2.6.2</a>
+          <a class="button" href="https://github.com/agegr/pi-web">为 Pi Web 加星支持作者</a>
+        </div>
+      </header>
+      <section class="card">
+        <h2>从桌面开始，打造自己的 Agent</h2>
+        <p>K-Pi Agent 是一个基于 Pi Web 的独立 Windows 桌面应用。它把 Pi Web 与所需的 Node.js 运行环境封装进安装包，由桌面外壳管理窗口、托盘和本地服务；Agent 界面与会话能力来自上游 Pi Web。</p>
+        <div class="grid">
+          <div class="item"><strong>信息调研与搜索</strong><span>围绕资料查找、信息比较和结果整理。</span></div>
+          <div class="item"><strong>文献与学习</strong><span>辅助获取有权访问的文献，整理阅读材料。</span></div>
+          <div class="item"><strong>数据与汇报</strong><span>辅助数据分析、绘图、PPT 与办公材料准备。</span></div>
+          <div class="item"><strong>电脑问题排查</strong><span>分析报错和配置问题，辅助排查软件环境。</span></div>
+        </div>
+        <p>这些是项目希望逐步完善的方向，不代表当前版本已具备并验证所有专用能力。实际效果取决于模型、工具、技能和权限。</p>
+      </section>
+      <section class="card">
+        <h2>软件界面</h2>
+        <img src="images/app-home.png" alt="K-Pi Agent Windows 桌面应用主页，显示 Pi Web Agent 聊天、项目列表和设置入口">
+        <p>作者提供的实际软件截图。图中的模型与项目是个人配置示例，并非安装包预置内容。</p>
+      </section>
+      <section class="card">
+        <h2>开始使用</h2>
+        <ol>
+          <li>下载 Windows x64 安装包并完成安装。</li>
+          <li>打开应用，在 Pi Web 模型设置中配置自己的模型服务或提供商登录。</li>
+          <li>选择工作目录，开始与 Agent 协作。</li>
+        </ol>
+        <p>首次使用需要配置自己的模型服务。仓库和安装包不附带个人 API Key；在线模型调用由你配置的服务商处理，可能产生费用。</p>
+        <a href="https://github.com/Deky0827/k-pi-agent/releases/tag/v2.6.2">查看下载、校验值与发布说明 →</a>
+      </section>
+      <footer>
+        <p><strong>致谢 Pi Web：</strong>本项目建立在 <a href="https://github.com/agegr/pi-web">agegr/pi-web</a> 的工作之上。本项目是独立社区项目，不代表 Pi Web 官方发行版。如果 K-Pi Agent 对你有帮助，也请到上游项目点一颗 Star。</p>
+        <p>项目主页：<a href="https://github.com/Deky0827/k-pi-agent">github.com/Deky0827/k-pi-agent</a> · MIT License · 当前版本 2.6.2 公开预览版</p>
+      </footer>
+    </main>
+  </body>
+</html>
