@@ -30,7 +30,7 @@
     "test": "npm run build && node --test \"tests/*.test.mjs\"",
     "pack:dir": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win --dir",
     "dist:portable": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win portable",
-    "dist:installer": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win nsis",
+    "dist:installer": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win nsis --publish never",
     "dist:all": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win portable nsis"
   },
   "dependencies": {
