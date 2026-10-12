@@ -1,0 +1,75 @@
+{
+  "id": "kitty",
+  "name": "小橘 Kitty",
+  "author": "K pi agent 原创",
+  "version": "1.2.0",
+  "description": "一只圆滚滚的橘猫：待机眨眼、拖拽小跑、点击开心、久坐打盹。由脚本程序化绘制。工作中会原地小跑假装很忙。",
+  "frameSize": 128,
+  "columns": 8,
+  "defaultState": "idle",
+  "reactions": [
+    "喵～在呢！",
+    "喵呜～最喜欢你 ❤",
+    "咕噜咕噜…",
+    "喵？戳我干嘛～"
+  ],
+  "states": {
+    "idle": {
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 3
+    },
+    "walk": {
+      "frames": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "fps": 9
+    },
+    "happy": {
+      "frames": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "fps": 5
+    },
+    "working": {
+      "frames": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "fps": 6
+    },
+    "waiting": {
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 2
+    },
+    "sleep": {
+      "frames": [
+        14,
+        15
+      ],
+      "fps": 1
+    }
+  },
+  "pixelated": true
+}

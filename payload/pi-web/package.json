@@ -1,0 +1,16 @@
+{
+  "name": "k-pi-agent-runtime",
+  "private": true,
+  "allowScripts": {
+    "@agegr/pi-web": false,
+    "@deepseek-ai/dsh-subprocess-local": true,
+    "koffi": true,
+    "node-pty": true,
+    "@google/genai": true,
+    "protobufjs": true,
+    "esbuild": true
+  },
+  "dependencies": {
+    "@agegr/pi-web": "0.11.0"
+  }
+}

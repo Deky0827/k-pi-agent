@@ -1,0 +1,49 @@
+# appId MUST stay stable across releases: the NSIS upgrade path matches the
+# previous installation (and its InstallLocation) by this id, so installing
+# 2.0 over "Pi Desktop" 0.1.0 upgrades in place instead of side-by-side.
+appId: com.agegr.pidesktop
+productName: K pi agent
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**
+  - package.json
+asar: true
+asarUnpack:
+  - node_modules/adm-zip/**
+extraResources:
+  - from: resources/seed
+    to: seed
+  - from: resources/settings-ui
+    to: settings-ui
+  - from: resources/pet-runtime
+    to: pet-runtime
+  - from: resources/seed-pets
+    to: seed-pets
+  - from: LICENSE
+    to: LICENSE
+  - from: THIRD_PARTY_NOTICES.md
+    to: THIRD_PARTY_NOTICES.md
+  - from: licenses
+    to: licenses
+win:
+  # CI/local builds are unsigned by default. signExecutable:false keeps icon and
+  # version-resource editing (build/icon.ico) while skipping Authenticode signing.
+  signExecutable: false
+  # Target is selected by the corresponding npm script: portable or nsis.
+  # This prevents a portable build from downloading NSIS tooling unnecessarily.
+  artifactName: ${productName}-${version}-${arch}.${ext}
+nsis:
+  include: build/compress-seed.nsh
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  # Pi Desktop stores its mutable payload under the current user's AppData and
+  # therefore does not require an administrator/UAC elevation helper.
+  allowElevation: false
+  perMachine: false
+  packElevateHelper: false
+  artifactName: ${productName}-Setup-${version}-${arch}.${ext}
+portable:
+  artifactName: K pi agent.exe
+publish: []

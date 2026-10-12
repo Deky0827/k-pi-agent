@@ -1,0 +1,45 @@
+{
+  "name": "k-pi-agent",
+  "version": "2.6.2",
+  "private": true,
+  "author": "K pi agent contributors",
+  "license": "MIT",
+  "description": "Standalone Windows desktop distribution for @agegr/pi-web (K pi agent)",
+  "homepage": "https://github.com/17837660134-hash/pi-web-agent-app#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/17837660134-hash/pi-web-agent-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/17837660134-hash/pi-web-agent-app/issues"
+  },
+  "main": "dist/main/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "allowScripts": {
+    "electron": true,
+    "electron-winstaller": true
+  },
+  "scripts": {
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit",
+    "build": "node node_modules/typescript/bin/tsc -p tsconfig.json",
+    "prepare:payload": "node scripts/prepare-payload.mjs",
+    "smoke:payload": "node scripts/smoke-payload.mjs",
+    "test": "npm run build && node --test \"tests/*.test.mjs\"",
+    "pack:dir": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win --dir",
+    "dist:portable": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win portable",
+    "dist:installer": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win nsis",
+    "dist:all": "npm run prepare:payload && npm run build && node node_modules/electron-builder/cli.js --win portable nsis"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "^5.9.3"
+  }
+}

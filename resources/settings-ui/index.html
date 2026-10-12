@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>K pi agent 设置</title>
+<style>
+  :root {
+    --bg: #17171d; --panel: #1f1f28; --panel2: #26262f; --line: #32323d;
+    --text: #e8e8ee; --muted: #9a9aa8; --accent: #6c5ce7; --accent2: #8b7cf0;
+    --danger: #e05d5d; --ok: #4cc38a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.6 "Segoe UI", "Microsoft YaHei", sans-serif; user-select: none; }
+  .wrap { display: flex; height: 100vh; }
+  nav { width: 190px; background: var(--panel); padding: 14px 10px; border-right: 1px solid var(--line); }
+  nav h1 { font-size: 15px; padding: 6px 10px 14px; color: var(--accent2); }
+  nav button { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--muted);
+    padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  nav button.active { background: var(--panel2); color: var(--text); }
+  nav button:hover { color: var(--text); }
+  main { flex: 1; overflow-y: auto; padding: 22px 26px; }
+  section { display: none; max-width: 640px; }
+  section.active { display: block; }
+  h2 { font-size: 17px; margin-bottom: 4px; }
+  .desc { color: var(--muted); font-size: 12.5px; margin-bottom: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; }
+  .row + .row { border-top: 1px solid var(--line); }
+  label.switch { position: relative; width: 44px; height: 24px; flex: none; cursor: pointer; }
+  label.switch input { display: none; }
+  label.switch i { position: absolute; inset: 0; background: var(--line); border-radius: 999px; transition: .15s; }
+  label.switch i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px;
+    background: #fff; border-radius: 50%; transition: .15s; }
+  label.switch input:checked + i { background: var(--accent); }
+  label.switch input:checked + i::after { left: 23px; }
+  button.btn { background: var(--accent); border: 0; color: #fff; padding: 8px 16px; border-radius: 8px;
+    cursor: pointer; font-size: 13px; }
+  button.btn:hover { background: var(--accent2); }
+  button.btn.ghost { background: var(--panel2); border: 1px solid var(--line); }
+  button.btn.ghost:hover { border-color: var(--accent); }
+  button.btn.danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
+  button.btn.small { padding: 5px 10px; font-size: 12px; }
+  button.btn:disabled { opacity: .45; cursor: not-allowed; }
+  .pets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .pet-card { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 10px;
+    text-align: center; position: relative; }
+  .pet-card.active { border-color: var(--accent); }
+  .pet-card canvas { width: 96px; height: 96px; image-rendering: pixelated; }
+  .pet-card .name { font-weight: 600; margin-top: 4px; }
+  .pet-card .meta { color: var(--muted); font-size: 11px; }
+  .pet-card .actions { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+  .badge { display: inline-block; background: var(--accent); color: #fff; font-size: 10px; padding: 1px 7px;
+    border-radius: 999px; position: absolute; top: 8px; right: 8px; }
+  .empty { text-align: center; color: var(--muted); padding: 34px 10px; border: 1px dashed var(--line);
+    border-radius: 12px; }
+  .empty .big { font-size: 30px; margin-bottom: 6px; }
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .modes label { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 8px;
+    text-align: center; cursor: pointer; font-size: 13px; }
+  .modes input { display: none; }
+  .modes label.active { border-color: var(--accent); color: var(--accent2); }
+  input[type=range] { width: 220px; accent-color: var(--accent); }
+  textarea { width: 100%; height: 180px; background: #131318; color: #d9d9e3; border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px; font: 12px/1.5 Consolas, monospace; resize: vertical; user-select: text; }
+  .kv { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .kv span:first-child { color: var(--muted); }
+  .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--panel2);
+    border: 1px solid var(--line); padding: 9px 18px; border-radius: 999px; font-size: 13px; display: none; z-index: 9; }
+  .toast.err { border-color: var(--danger); color: #ffb3b3; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  code { background: #131318; padding: 1px 6px; border-radius: 5px; font-size: 11.5px; user-select: text; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <h1>🐾 K pi agent</h1>
+    <button data-tab="pet" class="active">桌宠</button>
+    <button data-tab="theme">主题与外观</button>
+    <button data-tab="css">自定义 CSS</button>
+    <button data-tab="about">关于</button>
+  </nav>
+  <main>
+    <!-- ============ 桌宠 ============ -->
+    <section id="tab-pet" class="active">
+      <h2>桌宠</h2>
+      <div class="desc">桌宠以「资源包」形式安装：<code>pet.json</code> + <code>spritesheet.png</code> 打包成 zip 即可。框架是空的架子，装什么它就是什么。</div>
+      <div class="card">
+        <div class="row">
+          <div>
+            <b>启用桌宠</b>
+            <div class="hint">悬浮在所有窗口之上，可拖拽；右键桌宠可隐藏</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="pet-enabled"><i></i></label>
+        </div>
+        <div class="row">
+          <div><b>大小</b><div class="hint" id="pet-scale-val"></div></div>
+          <input type="range" id="pet-scale" min="0.4" max="2" step="0.1">
+        </div>
+      </div>
+      <div class="card">
+        <div class="row" style="border:0; padding-top:0;">
+          <b>已安装的桌宠</b>
+          <button class="btn" id="pet-install">📦 安装桌宠 (.zip)</button>
+        </div>
+        <div class="pets-grid" id="pets-grid"></div>
+        <div class="empty" id="pets-empty" style="display:none">
+          <div class="big">🐱</div>
+          还没有安装任何桌宠<br>点击右上角「安装桌宠」导入资源包，或把资源文件夹放进
+          <code>…\pi-desktop\pets\</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 主题 ============ -->
+    <section id="tab-theme">
+      <h2>主题与外观</h2>
+      <div class="desc">主题模式直接驱动 pi-web 内置配色；主题包以 CSS 覆盖形式叠加（<code>theme.json</code> + <code>theme.css</code> 打包 zip）。</div>
+      <div class="card">
+        <div class="row" style="border:0; padding-top:0;"><b>主题模式</b></div>
+        <div class="modes" id="theme-modes">
+          <label data-mode="system"><input type="radio" name="mode">🖥 跟随系统</label>
+          <label data-mode="light"><input type="radio" name="mode">☀ 浅色</label>
+          <label data-mode="dark"><input type="radio" name="mode">🌙 深色</label>
+        </div>
+        <div class="hint">切换时会刷新一次主界面；「跟随系统」交还 pi-web 自己的检测</div>
+      </div>
+      <div class="card">
+        <div class="row" style="border:0; padding-top:0;"><b>界面缩放</b><span class="hint" id="zoom-val"></span></div>
+        <input type="range" id="ui-zoom" min="0.8" max="1.4" step="0.05">
+      </div>
+      <div class="card">
+        <div class="row" style="border:0; padding-top:0;">
+          <b>已安装的主题包</b>
+          <button class="btn" id="theme-install">📦 安装主题 (.zip)</button>
+        </div>
+        <div id="themes-list"></div>
+        <div class="empty" id="themes-empty" style="display:none">
+          <div class="big">🎨</div>
+          还没有安装主题包 —— 框架已就绪，随时装入你的第一个主题
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 自定义 CSS ============ -->
+    <section id="tab-css">
+      <h2>自定义 CSS</h2>
+      <div class="desc">最高优先级，直接注入 pi-web 页面。改完点「应用」立即生效（不用重启）。</div>
+      <div class="card">
+        <textarea id="custom-css" spellcheck="false" placeholder="/* 例如：给消息气泡加圆角
+.message { border-radius: 14px !important; } */"></textarea>
+        <div style="margin-top:10px; display:flex; gap:8px;">
+          <button class="btn" id="css-apply">应用</button>
+          <button class="btn ghost" id="css-reset">清空</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 关于 ============ -->
+    <section id="tab-about">
+      <h2>关于</h2>
+      <div class="card">
+        <div class="kv"><span>应用版本</span><b id="info-app"></b></div>
+        <div class="kv"><span>Electron / Node</span><b id="info-runtime"></b></div>
+        <div class="kv"><span>服务端口</span><b id="info-port"></b></div>
+        <div class="kv"><span>网络代理</span><b id="info-proxy"></b></div>
+      </div>
+      <div class="card">
+        <div class="row" style="border:0; padding-top:0;"><b>目录与诊断</b></div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn ghost" id="open-logs">打开日志目录</button>
+          <button class="btn ghost" id="open-userdata">打开应用数据目录</button>
+          <button class="btn ghost" id="open-pidata">打开会话数据 (~/.pi)</button>
+        </div>
+        <div class="hint">桌宠与主题资源存放在应用数据目录下的 <code>pets\</code> 与 <code>themes\</code></div>
+      </div>
+      <div class="card">
+        <div class="row" style="border:0; padding-top:0;"><b>设置备份</b></div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn ghost" id="btn-export">导出设置 (.json)</button>
+          <button class="btn ghost" id="btn-import">导入设置</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const toast = (msg, err) => {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.className = "toast" + (err ? " err" : "");
+  t.style.display = "block";
+  clearTimeout(t._h);
+  t._h = setTimeout(() => { t.style.display = "none"; }, 2600);
+};
+
+/* ---- tabs ---- */
+document.querySelectorAll("nav button").forEach((btn) => {
+  btn.onclick = () => {
+    document.querySelectorAll("nav button").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll("section").forEach((s) => s.classList.remove("active"));
+    btn.classList.add("active");
+    $("#tab-" + btn.dataset.tab).classList.add("active");
+  };
+});
+
+/* ---- state ---- */
+let settings = null;
+
+async function refreshAll() {
+  settings = await window.kAgent.settingsGet();
+  renderPet();
+  renderTheme();
+  renderCss();
+}
+
+/* ---- pet tab ---- */
+function renderPet() {
+  $("#pet-enabled").checked = settings.pet.enabled;
+  $("#pet-scale").value = settings.pet.scale;
+  $("#pet-scale-val").textContent = "当前 " + Math.round(settings.pet.scale * 100) + "%";
+  window.kAgent.petsList().then((pets) => {
+    const grid = $("#pets-grid");
+    grid.innerHTML = "";
+    $("#pets-empty").style.display = pets.length ? "none" : "block";
+    for (const pet of pets) {
+      const card = document.createElement("div");
+      card.className = "pet-card" + (settings.pet.activePetId === pet.id ? " active" : "");
+      const canvas = document.createElement("canvas");
+      canvas.width = pet.manifest.frameSize;
+      canvas.height = pet.manifest.frameSize;
+      const img = new Image();
+      img.onload = () => {
+        const ctx = canvas.getContext("2d");
+        const fs = pet.manifest.frameSize;
+        ctx.imageSmoothingEnabled = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, fs, fs, 0, 0, fs, fs);
+      };
+      img.src = pet.previewDataUrl;
+      card.appendChild(canvas);
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = pet.manifest.name;
+      card.appendChild(name);
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = (pet.manifest.author || "未知作者") + (pet.manifest.version ? " · v" + pet.manifest.version : "");
+      card.appendChild(meta);
+      if (settings.pet.activePetId === pet.id) {
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = "使用中";
+        card.appendChild(badge);
+      }
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const useBtn = document.createElement("button");
+      useBtn.className = "btn small";
+      useBtn.textContent = settings.pet.activePetId === pet.id ? "停用" : "使用";
+      useBtn.onclick = async () => {
+        const use = settings.pet.activePetId !== pet.id;
+        settings = await window.kAgent.settingsSet({ pet: { activePetId: use ? pet.id : null, enabled: use } });
+        renderPet();
+      };
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn small danger";
+      delBtn.textContent = "删除";
+      delBtn.onclick = async () => {
+        if (!confirm("确定删除桌宠「" + pet.manifest.name + "」吗？")) return;
+        const res = await window.kAgent.petsRemove(pet.id);
+        if (res.ok) { toast("已删除"); refreshAll(); } else toast(res.error || "删除失败", true);
+      };
+      actions.appendChild(useBtn);
+      actions.appendChild(delBtn);
+      card.appendChild(actions);
+      grid.appendChild(card);
+    }
+  });
+}
+$("#pet-enabled").onchange = async (e) => {
+  if (e.target.checked && !settings.pet.activePetId) {
+    const pets = await window.kAgent.petsList();
+    if (!pets.length) { toast("还没有安装桌宠资源包", true); e.target.checked = false; return; }
+    settings = await window.kAgent.settingsSet({ pet: { activePetId: pets[0].id, enabled: true } });
+  } else {
+    settings = await window.kAgent.settingsSet({ pet: { enabled: e.target.checked } });
+  }
+  renderPet();
+};
+$("#pet-scale").oninput = (e) => { $("#pet-scale-val").textContent = "当前 " + Math.round(e.target.value * 100) + "%"; };
+$("#pet-scale").onchange = async (e) => {
+  settings = await window.kAgent.settingsSet({ pet: { scale: Number(e.target.value) } });
+};
+$("#pet-install").onclick = async () => {
+  const res = await window.kAgent.petsInstall();
+  if (res.ok) { toast("桌宠安装成功，点击「使用」即可"); refreshAll(); }
+  else if (res.error !== "已取消") toast(res.error, true);
+};
+
+/* ---- theme tab ---- */
+function renderTheme() {
+  document.querySelectorAll("#theme-modes label").forEach((l) => {
+    l.classList.toggle("active", l.dataset.mode === settings.theme.mode);
+    l.querySelector("input").checked = l.dataset.mode === settings.theme.mode;
+  });
+  $("#ui-zoom").value = settings.ui.zoom;
+  $("#zoom-val").textContent = "当前 " + Math.round(settings.ui.zoom * 100) + "%";
+  window.kAgent.themesList().then((themes) => {
+    const list = $("#themes-list");
+    list.innerHTML = "";
+    $("#themes-empty").style.display = themes.length ? "none" : "block";
+    for (const th of themes) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const left = document.createElement("div");
+      const name = document.createElement("b");
+      name.textContent = th.manifest.name;
+      const meta = document.createElement("span");
+      meta.className = "hint";
+      meta.textContent = (th.manifest.author || "") + (th.manifest.version ? " · v" + th.manifest.version : "");
+      left.append(name, " ", meta);
+      row.appendChild(left);
+      const right = document.createElement("div");
+      const useBtn = document.createElement("button");
+      useBtn.className = "btn small";
+      useBtn.textContent = settings.theme.activeThemeId === th.id ? "停用" : "使用";
+      useBtn.onclick = async () => {
+        const use = settings.theme.activeThemeId !== th.id;
+        settings = await window.kAgent.settingsSet({ theme: { activeThemeId: use ? th.id : null } });
+        renderTheme();
+      };
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn small danger";
+      delBtn.textContent = "删除";
+      delBtn.onclick = async () => {
+        if (!confirm("确定删除主题「" + th.manifest.name + "」吗？")) return;
+        const res = await window.kAgent.themesRemove(th.id);
+        if (res.ok) { toast("已删除"); refreshAll(); } else toast(res.error || "删除失败", true);
+      };
+      right.appendChild(useBtn);
+      right.appendChild(delBtn);
+      row.appendChild(right);
+      list.appendChild(row);
+    }
+  });
+}
+document.querySelectorAll("#theme-modes label").forEach((l) => {
+  l.onclick = async () => {
+    settings = await window.kAgent.settingsSet({ theme: { mode: l.dataset.mode } });
+    renderTheme();
+    toast("主题模式已切换");
+  };
+});
+$("#ui-zoom").oninput = (e) => { $("#zoom-val").textContent = "当前 " + Math.round(e.target.value * 100) + "%"; };
+$("#ui-zoom").onchange = async (e) => {
+  settings = await window.kAgent.settingsSet({ ui: { zoom: Number(e.target.value) } });
+};
+$("#theme-install").onclick = async () => {
+  const res = await window.kAgent.themesInstall();
+  if (res.ok) { toast("主题安装成功，点击「使用」即可"); refreshAll(); }
+  else if (res.error !== "已取消") toast(res.error, true);
+};
+
+/* ---- css tab ---- */
+function renderCss() { $("#custom-css").value = settings.ui.customCss || ""; }
+$("#css-apply").onclick = async () => {
+  settings = await window.kAgent.settingsSet({ ui: { customCss: $("#custom-css").value } });
+  toast("自定义 CSS 已应用");
+};
+$("#css-reset").onclick = async () => {
+  $("#custom-css").value = "";
+  settings = await window.kAgent.settingsSet({ ui: { customCss: "" } });
+  toast("已清空");
+};
+
+/* ---- about tab ---- */
+function renderAbout(info) {
+  $("#info-app").textContent = "K pi agent v" + info.appVersion;
+  $("#info-runtime").textContent = "Electron " + info.electronVersion + " / Node " + info.nodeVersion;
+  $("#info-port").textContent = info.port;
+  const names = { environment: "环境变量代理", "windows-system": "Windows 系统代理", direct: "直连（未检测到代理）" };
+  $("#info-proxy").textContent = names[info.proxySource] || info.proxySource + (info.proxyUrl ? " → " + info.proxyUrl : "");
+}
+window.kAgent.networkInfo().then(renderAbout);
+$("#open-logs").onclick = () => window.kAgent.openPath("logs");
+$("#open-userdata").onclick = () => window.kAgent.openPath("userData");
+$("#open-pidata").onclick = () => window.kAgent.openPath("piData");
+$("#btn-export").onclick = async () => {
+  const res = await window.kAgent.settingsExport();
+  if (res.ok) toast("已导出到 " + res.path);
+  else if (res.error !== "已取消") toast(res.error, true);
+};
+$("#btn-import").onclick = async () => {
+  const res = await window.kAgent.settingsImport();
+  if (res.ok) { toast("设置已导入"); refreshAll(); }
+  else if (res.error !== "已取消") toast(res.error, true);
+};
+
+/* ---- live sync (main pushes changes, e.g. tray pet toggle) ---- */
+window.kAgent.onSettingsChanged(() => refreshAll());
+refreshAll();
+</script>
+</body>
+</html>

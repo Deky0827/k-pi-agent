@@ -1,0 +1,15 @@
+node_modules/
+dist/
+release/
+release-*/
+resources/seed/
+resources/seed.zip
+offline-assets/
+.work-test/
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+electron-builder-validation.yml
+.codex_sessions/

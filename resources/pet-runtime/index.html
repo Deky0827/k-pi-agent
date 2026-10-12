@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { background: transparent; overflow: hidden; width: 100%; height: 100%; }
+  #stage { position: absolute; bottom: 0; left: 0; cursor: grab; display: block; }
+  #stage.dragging { cursor: grabbing; }
+  #bubble {
+    position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
+    max-width: 92%; background: rgba(255, 255, 255, 0.96); color: #333;
+    border: 1.5px solid #d8c7a8; border-radius: 10px; padding: 3px 8px;
+    font: 12px/1.5 "Segoe UI", "Microsoft YaHei", sans-serif; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25); opacity: 0; transition: opacity .25s;
+    pointer-events: none; text-align: center;
+  }
+  #bubble.show { opacity: 1; }
+  #bubble::after {
+    content: ""; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+    border: 6px solid transparent; border-top-color: rgba(255,255,255,.96); border-bottom: 0;
+  }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<script>
+/**
+ * Desktop-pet runtime. Loads a pet resource package (?pet=<id>) and renders its
+ * spritesheet states:
+ *   - pi session state (from main): working / waiting / idle / sleep
+ *   - walk while dragging, happy on click (with random speech bubble)
+ * Falls back through manifest states when a pet package lacks a state.
+ * Right-click hides the pet. Escape hides the pet.
+ */
+const params = new URLSearchParams(location.search);
+const petId = params.get("pet");
+const spriteSize = Number(params.get("sprite") || 128);
+const canvas = document.getElementById("stage");
+
+const ctx = canvas.getContext("2d");
+
+let manifest = null;
+let sheet = null;
+let state = "idle";
+let piState = "idle";
+let frameIdx = 0;
+let lastFrameAt = 0;
+let animationTimer;
+let lastInteraction = Date.now();
+let dragging = false;
+let happyUntil = 0;
+let lastX = 0, lastY = 0, movedAcc = 0, downAt = 0;
+
+const SLEEP_AFTER_MS = 60000;
+const HAPPY_MS = 1600;
+
+/** Resolves a wanted state to the closest state the pet package provides. */
+function resolveState(wanted) {
+  const chains = {
+    working: ["working", "walk", "idle"],
+    waiting: ["waiting", "idle"],
+    sleep: ["sleep", "idle"],
+    idle: ["idle"],
+    happy: ["happy", "idle"],
+    walk: ["walk", "idle"]
+  };
+  const m = manifest.states;
+  for (const s of chains[wanted] || [wanted]) if (m[s]) return s;
+  return manifest.defaultState || Object.keys(m)[0];
+}
+
+function setState(wanted) {
+  const resolved = resolveState(wanted);
+  if (state !== resolved) { state = resolved; frameIdx = 0; lastFrameAt = 0; scheduleDraw(); }
+}
+
+function say(text, ms) {
+  if (!text) return;
+  window.kAgent.petSay(text, ms); // bubble is rendered by a dedicated overlay window
+}
+
+function currentFps() {
+  const def = manifest.states[state];
+  const fps = Number(def?.fps) || 4;
+  return Math.min(30, Math.max(1, fps));
+}
+
+function scheduleDraw(delay = 0) {
+  if (!manifest || !sheet || document.hidden) return;
+  clearTimeout(animationTimer);
+  animationTimer = setTimeout(() => {
+    animationTimer = undefined;
+    drawFrame();
+  }, delay);
+}
+
+function drawFrame() {
+  if (!manifest || !sheet || document.hidden) return;
+  if (!dragging) {
+    if (Date.now() < happyUntil) setState("happy");
+    else if (Date.now() - lastInteraction > SLEEP_AFTER_MS) setState("sleep");
+    else setState(piState);
+  }
+  const def = manifest.states[state];
+  if (def?.frames?.length) {
+    frameIdx = (frameIdx + 1) % def.frames.length;
+    const fs = manifest.frameSize;
+    const col = manifest.columns;
+    const index = def.frames[frameIdx];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(sheet, (index % col) * fs, Math.floor(index / col) * fs, fs, fs, 0, 0, canvas.width, canvas.height);
+  }
+  if (animationTimer === undefined) scheduleDraw(1000 / currentFps());
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    clearTimeout(animationTimer);
+    animationTimer = undefined;
+  } else scheduleDraw();
+});
+
+function poke() { lastInteraction = Date.now(); }
+
+canvas.addEventListener("pointerdown", (e) => {
+  if (e.button === 2) { window.kAgent.petHide(); return; }
+  dragging = true;
+  movedAcc = 0;
+  downAt = Date.now();
+  lastX = e.screenX; lastY = e.screenY;
+  canvas.classList.add("dragging");
+  canvas.setPointerCapture(e.pointerId);
+  poke();
+});
+canvas.addEventListener("pointermove", (e) => {
+  if (!dragging) return;
+  const dx = e.screenX - lastX;
+  const dy = e.screenY - lastY;
+  lastX = e.screenX; lastY = e.screenY;
+  movedAcc += Math.abs(dx) + Math.abs(dy);
+  window.kAgent.petMoveBy(dx, dy);
+  setState("walk");
+  poke();
+});
+canvas.addEventListener("pointerup", (e) => {
+  if (!dragging) return;
+  dragging = false;
+  canvas.classList.remove("dragging");
+  void window.kAgent.petMoveEnd();
+  if (movedAcc < 6 && Date.now() - downAt < 400) {
+    happyUntil = Date.now() + HAPPY_MS;
+    setState("happy");
+    const reactions = manifest.reactions || [];
+    if (reactions.length) say(reactions[Math.floor(Math.random() * reactions.length)], 2600);
+  }
+  poke();
+});
+canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+window.addEventListener("keydown", (e) => { if (e.key === "Escape") window.kAgent.petHide(); });
+
+window.kAgent.onPetPiState((stateName) => {
+  piState = stateName || "idle";
+  if (!dragging && Date.now() >= happyUntil) setState(piState);
+  const msgs = { working: "开工啦，盯屏幕中…", waiting: "写完啦，等你验收～", sleep: "睡着啦…有事叫我" };
+  if (msgs[piState]) say(msgs[piState], 2500);
+});
+
+async function boot() {
+  const payload = await window.kAgent.petGetData(petId);
+  if (!payload) { document.title = "pet missing"; return; }
+  manifest = payload.manifest;
+  // Render at native device resolution: canvas internal size = CSS size x DPR,
+  // so the sprite is sampled once at 1:1 physical pixels (no CSS-resample blur).
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(spriteSize * dpr);
+  canvas.height = Math.round(spriteSize * dpr);
+  canvas.style.width = spriteSize + "px";
+  canvas.style.height = spriteSize + "px";
+  if (manifest.pixelated) canvas.style.imageRendering = "pixelated";
+  ctx.imageSmoothingEnabled = !manifest.pixelated;
+  ctx.imageSmoothingQuality = "high";
+  sheet = new Image();
+  sheet.onload = () => scheduleDraw();
+  sheet.src = payload.spritesheetDataUrl;
+}
+boot();
+</script>
+</body>
+</html>
